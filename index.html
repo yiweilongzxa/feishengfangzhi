@@ -25,7 +25,7 @@
   <h2>飞升放置等级提升时间计算器</h2>
   <label>当前等级 <input id="level" type="number" min="1" max="199" /></label><br />
   <label>当前进度% <input id="progress" type="number" min="0" max="100" /></label><br />
-  <label>目标等级<input id="target" type="number" min="2" max="200" /></label><br />
+  <label>目标等级 <input id="target" type="number" min="2" max="200" /></label><br />
   <button onclick="calculate()">确认</button>
 
   <div class="result" id="output"></div>
@@ -63,10 +63,25 @@
     }
 
     function secondsToHMS(seconds) {
-      const h = Math.floor(seconds / 3600);
-      const m = Math.floor((seconds % 3600) / 60);
-      const s = Math.floor(seconds % 60);
-      return `${h}小时 ${m}分钟 ${s}秒`;
+      const d = Math.floor(seconds);
+      if (d < 60) {
+        return `${d}秒`;
+      } else if (d < 3600) {
+        const m = Math.floor(d / 60);
+        const s = d % 60;
+        return `${m}分钟 ${s}秒`;
+      } else if (d < 86400) {
+        const h = Math.floor(d / 3600);
+        const m = Math.floor((d % 3600) / 60);
+        const s = d % 60;
+        return `${h}小时 ${m}分钟 ${s}秒`;
+      } else {
+        const days = Math.floor(d / 86400);
+        const h = Math.floor((d % 86400) / 3600);
+        const m = Math.floor((d % 3600) / 60);
+        const s = d % 60;
+        return `${days}天 ${h}小时 ${m}分钟 ${s}秒`;
+      }
     }
 
     function calculate() {
@@ -75,7 +90,7 @@
       const c = parseInt(document.getElementById('target').value);
 
       if (a < 1 || c > 200 || b < 0 || b > 100 || c <= a) {
-        document.getElementById('output').innerText = "请输入有效数值（目标等级必须高于当前等级）";
+        document.getElementById('output').innerText = "请输入有效数值";
         return;
       }
 
@@ -88,7 +103,7 @@
       const d = (expC - currentExp) / e;
       const hms = secondsToHMS(d);
 
-      document.getElementById('output').innerText = `需要时间: ${Math.floor(d)} 秒 ≈ ${hms}`;
+      document.getElementById('output').innerText = `需要时间:  ${hms}`;
     }
   </script>
 </body>
