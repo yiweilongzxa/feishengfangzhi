@@ -26,10 +26,31 @@
       display: inline-block;
       width: 150px;
     }
+    .tea-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 10px 0;
+    }
+    .tea-label {
+      width: 150px;
+    }
+    .tea-options {
+      display: flex;
+      gap: 10px;
+    }
   </style>
 </head>
 <body>
   <h2>飞升放置等级提升时间计算器</h2>
+  
+  <div class="input-row">
+    <label>选择职业:</label>
+    <select id="profession" onchange="updateTeaOptions()">
+      <option value="extract">汲取</option>
+      <option value="collect">采集</option>
+    </select>
+  </div>
   
   <div class="input-row">
     <label>当前等级:</label>
@@ -71,6 +92,42 @@
   <div class="input-row">
     <label>强化等级:</label>
     <input id="enhancement" type="number" min="0" max="20" value="0" />
+  </div>
+  
+  <div class="input-row">
+    <label>袋子:</label>
+    <select id="bag">
+      <option value="none">无</option>
+      <option value="small">小袋子</option>
+      <option value="medium">中袋子</option>
+      <option value="large">大袋子</option>
+      <option value="huge">巨大袋子</option>
+    </select>
+  </div>
+  
+  <div class="tea-row">
+    <label class="tea-label">茶:</label>
+    <div class="tea-options">
+      <select id="tea1">
+        <option value="none">无</option>
+        <option value="exp">经验茶</option>
+        <option value="efficiency">效率茶</option>
+      </select>
+      
+      <select id="tea2">
+        <option value="none">无</option>
+        <option value="exp">经验茶</option>
+        <option value="efficiency">效率茶</option>
+        <option value="extract">汲取茶</option>
+      </select>
+      
+      <select id="tea3">
+        <option value="none">无</option>
+        <option value="exp">经验茶</option>
+        <option value="efficiency">效率茶</option>
+        <option value="super_extract">超级汲取茶</option>
+      </select>
+    </div>
   </div>
   
   <div class="input-row">
@@ -123,6 +180,56 @@
       1.0, 1.02, 1.042, 1.066, 1.092, 1.125, 1.15, 1.182, 1.216, 1.25,
       1.29, 1.33, 1.372, 1.416, 1.462, 1.51, 1.56, 1.612, 1.666, 1.722, 1.78
     ];
+
+    // 袋子加成 (假设加成值，可根据实际游戏调整)
+    const bagBonus = {
+      'none': 1.0,
+      'small': 1.05,
+      'medium': 1.10,
+      'large': 1.15,
+      'huge': 1.20
+    };
+
+    // 茶的加成
+    const teaBonus = {
+      'none': { exp: 1.0, efficiency: 1.0 },
+      'exp': { exp: 1.12, efficiency: 1.0 },
+      'efficiency': { exp: 1.0, efficiency: 1.05 },
+      'extract': { exp: 1.0, efficiency: 1.03 },
+      'super_extract': { exp: 1.0, efficiency: 1.06 },
+      'ultimate_extract': { exp: 1.0, efficiency: 1.09 },
+      'collect': { exp: 1.0, efficiency: 1.03 },
+      'super_collect': { exp: 1.0, efficiency: 1.06 },
+      'ultimate_collect': { exp: 1.0, efficiency: 1.09 }
+    };
+
+    // 更新茶选项
+    function updateTeaOptions() {
+      const profession = document.getElementById('profession').value;
+      const tea2 = document.getElementById('tea2');
+      const tea3 = document.getElementById('tea3');
+      
+      // 重置茶选项
+      tea2.innerHTML = `
+        <option value="none">无</option>
+        <option value="exp">经验茶</option>
+        <option value="efficiency">效率茶</option>
+      `;
+      
+      tea3.innerHTML = `
+        <option value="none">无</option>
+        <option value="exp">经验茶</option>
+        <option value="efficiency">效率茶</option>
+      `;
+      
+      if (profession === 'extract') {
+        tea2.innerHTML += '<option value="extract">汲取茶</option>';
+        tea3.innerHTML += '<option value="super_extract">超级汲取茶</option>';
+      } else if (profession === 'collect') {
+        tea2.innerHTML += '<option value="collect">采集茶</option>';
+        tea3.innerHTML += '<option value="super_collect">超级采集茶</option>';
+      }
+    }
 
     // 自动设置工具
     function autoSetTool() {
@@ -204,6 +311,10 @@
       const targetLevel = parseInt(document.getElementById('target').value);
       const tool = document.getElementById('tool').value;
       const enhancement = parseInt(document.getElementById('enhancement').value);
+      const bag = document.getElementById('bag').value;
+      const tea1 = document.getElementById('tea1').value;
+      const tea2 = document.getElementById('tea2').value;
+      const tea3 = document.getElementById('tea3').value;
 
       if (currentLevel < 1 || targetLevel > 200 || progress < 0 || progress > 100 || targetLevel <= currentLevel) {
         document.getElementById('output').innerText = "请输入有效数值";
@@ -225,12 +336,27 @@
       // 计算工具和强化加成
       const toolSpeedBonus = toolBonus[tool];
       const enhanceBonus = enhancementBonus[enhancement];
+      const bagSpeedBonus = bagBonus[bag];
+      
+      // 计算茶的加成
+      let totalExpBonus = 1.0;
+      let totalEfficiencyBonus = 1.0;
+      
+      [tea1, tea2, tea3].forEach(tea => {
+        if (tea !== 'none' && teaBonus[tea]) {
+          totalExpBonus *= teaBonus[tea].exp;
+          totalEfficiencyBonus *= teaBonus[tea].efficiency;
+        }
+      });
+      
+      // 计算实际经验获取
+      const actualExpGain = targetStats.expGain * totalExpBonus;
       
       // 计算实际行动时间
-      const actualActionTime = targetStats.baseTime / toolSpeedBonus / enhanceBonus;
+      const actualActionTime = targetStats.baseTime / toolSpeedBonus / enhanceBonus / bagSpeedBonus / totalEfficiencyBonus;
       
       // 计算需要的行动次数
-      const actionsNeeded = neededExp / targetStats.expGain;
+      const actionsNeeded = neededExp / actualExpGain;
       
       // 计算总时间
       const totalTime = actionsNeeded * actualActionTime;
@@ -241,9 +367,14 @@
         需要时间: ${hms}<br>
         需要行动次数: ${Math.ceil(actionsNeeded)}次<br>
         单次行动时间: ${actualActionTime.toFixed(2)}秒<br>
-        单次经验获取: ${targetStats.expGain}
+        单次经验获取: ${actualExpGain.toFixed(1)}<br>
+        经验加成: ${(totalExpBonus * 100).toFixed(1)}%<br>
+        效率加成: ${(totalEfficiencyBonus * 100).toFixed(1)}%
       `;
     }
+
+    // 初始化茶选项
+    updateTeaOptions();
   </script>
 </body>
 </html>
