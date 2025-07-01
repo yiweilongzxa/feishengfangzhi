@@ -126,6 +126,7 @@
         <option value="exp">经验茶</option>
         <option value="efficiency">效率茶</option>
         <option value="super_extract">超级汲取茶</option>
+	<option value="ultra_extract">究极汲取茶</option>
       </select>
     </div>
   </div>
@@ -163,6 +164,17 @@
       47595067021, 51712786465, 56179815564, 61025256696, 66280594953, 71979889960, 78159982881, 84860719814, 92125192822, 100000000000
     ];
 
+    // 项目对应的需要等级
+    const projectRequiredLevel = {
+      1: 1,
+      2: 10,
+      3: 20,
+      4: 35,
+      5: 50,
+      6: 65,
+      7: 80
+    };
+
     // 工具基础行动速度加成
     const toolBonus = {
       'none': 1.0,
@@ -184,23 +196,23 @@
     // 袋子加成 (假设加成值，可根据实际游戏调整)
     const bagBonus = {
       'none': 1.0,
-      'small': 1.05,
-      'medium': 1.10,
-      'large': 1.15,
-      'huge': 1.20
+      'small': 1.0,
+      'medium': 1.0,
+      'large': 1.0,
+      'huge': 1.0
     };
 
     // 茶的加成
     const teaBonus = {
       'none': { exp: 1.0, efficiency: 1.0 },
       'exp': { exp: 1.12, efficiency: 1.0 },
-      'efficiency': { exp: 1.0, efficiency: 1.05 },
-      'extract': { exp: 1.0, efficiency: 1.03 },
-      'super_extract': { exp: 1.0, efficiency: 1.06 },
-      'ultimate_extract': { exp: 1.0, efficiency: 1.09 },
-      'collect': { exp: 1.0, efficiency: 1.03 },
-      'super_collect': { exp: 1.0, efficiency: 1.06 },
-      'ultimate_collect': { exp: 1.0, efficiency: 1.09 }
+      'efficiency': { exp: 1.0, efficiency: 1.09 },
+      'extract': { exp: 1.0, efficiency: 1.0 },
+      'super_extract': { exp: 1.0, efficiency: 1.0 },
+      'ultra_extract': { exp: 1.0, efficiency: 1.0 },
+      'collect': { exp: 1.0, efficiency: 1.0 },
+      'super_collect': { exp: 1.0, efficiency: 1.0 },
+      'ultra_collect': { exp: 1.0, efficiency: 1.09 }
     };
 
     // 更新茶选项
@@ -225,9 +237,11 @@
       if (profession === 'extract') {
         tea2.innerHTML += '<option value="extract">汲取茶</option>';
         tea3.innerHTML += '<option value="super_extract">超级汲取茶</option>';
+	tea3.innerHTML += '<option value="ultra_extract">究极汲取茶</option>';
       } else if (profession === 'collect') {
         tea2.innerHTML += '<option value="collect">采集茶</option>';
         tea3.innerHTML += '<option value="super_collect">超级采集茶</option>';
+	tea3.innerHTML += '<option value="ultra_collect">究极采集茶</option>';
       }
     }
 
@@ -253,34 +267,54 @@
       }
     }
 
-    // 获取目标等级对应的经验值和基础时长
-    function getTargetStats(level) {
+    // 根据选取项目获取经验值和基础时长
+    function getTargetStats(project) {
       let expGain, baseTime;
       
-      if (level >= 1 && level <= 9) {
-        expGain = 5;
-        baseTime = 6;
-      } else if (level >= 10 && level <= 19) {
-        expGain = 7.5;
-        baseTime = 8;
-      } else if (level >= 20 && level <= 34) {
-        expGain = 12.5;
-        baseTime = 11;
-      } else if (level >= 35 && level <= 49) {
-        expGain = 20;
-        baseTime = 14;
-      } else if (level >= 50 && level <= 64) {
-        expGain = 30;
-        baseTime = 17;
-      } else if (level >= 65 && level <= 79) {
-        expGain = 40;
-        baseTime = 20;
-      } else if (level >= 80) {
-        expGain = 55.5;
-        baseTime = 30;
+      switch(project) {
+        case 1:
+          expGain = 5;
+          baseTime = 6;
+          break;
+        case 2:
+          expGain = 7.5;
+          baseTime = 8;
+          break;
+        case 3:
+          expGain = 12.5;
+          baseTime = 11;
+          break;
+        case 4:
+          expGain = 20;
+          baseTime = 14;
+          break;
+        case 5:
+          expGain = 30;
+          baseTime = 17;
+          break;
+        case 6:
+          expGain = 40;
+          baseTime = 20;
+          break;
+        case 7:
+          expGain = 55.5;
+          baseTime = 30;
+          break;
+        default:
+          expGain = 5;
+          baseTime = 6;
+          break;
       }
       
       return { expGain, baseTime };
+    }
+
+    // 计算等级效率加成
+    function calculateLevelEfficiency(currentLevel, project) {
+      const requiredLevel = projectRequiredLevel[project];
+      const levelDifference = currentLevel - requiredLevel;
+      const efficiency = Math.max(1.0, 1.0 + levelDifference*0.01);
+      return efficiency;
     }
 
     function secondsToHMS(seconds) {
@@ -309,6 +343,7 @@
       const currentLevel = parseInt(document.getElementById('level').value);
       const progress = parseFloat(document.getElementById('progress').value);
       const targetLevel = parseInt(document.getElementById('target').value);
+      const project = parseInt(document.getElementById('project').value);
       const tool = document.getElementById('tool').value;
       const enhancement = parseInt(document.getElementById('enhancement').value);
       const bag = document.getElementById('bag').value;
@@ -330,8 +365,8 @@
       // 需要的经验值
       const neededExp = expC - currentExp;
       
-      // 获取目标等级对应的行动数据
-      const targetStats = getTargetStats(targetLevel);
+      // 根据选取项目获取行动数据
+      const targetStats = getTargetStats(project);
       
       // 计算工具和强化加成
       const toolSpeedBonus = toolBonus[tool];
@@ -340,7 +375,7 @@
       
       // 计算茶的加成
       let totalExpBonus = 1.0;
-      let totalEfficiencyBonus = 1.0;
+      let totalEfficiencyBonus = 0.0;
       
       [tea1, tea2, tea3].forEach(tea => {
         if (tea !== 'none' && teaBonus[tea]) {
@@ -349,17 +384,25 @@
         }
       });
       
+      // 计算等级效率加成
+      const levelEfficiency = calculateLevelEfficiency(currentLevel, project);
+      
+      // 计算总效率加成（包含等级效率和茶的效率）
+      const totalEfficiency = levelEfficiency + totalEfficiencyBonus;
+      
       // 计算实际经验获取
       const actualExpGain = targetStats.expGain * totalExpBonus;
       
-      // 计算实际行动时间
-      const actualActionTime = targetStats.baseTime / toolSpeedBonus / enhanceBonus / bagSpeedBonus / totalEfficiencyBonus;
+      // 计算实际行动时间（应用速度加成和效率加成）
+      
+      const actualActionTime = targetStats.baseTime / toolSpeedBonus / enhanceBonus;	
+      const totalSpeedBonus = toolSpeedBonus * enhanceBonus;
       
       // 计算需要的行动次数
       const actionsNeeded = neededExp / actualExpGain;
       
       // 计算总时间
-      const totalTime = actionsNeeded * actualActionTime;
+      const totalTime = actionsNeeded * actualActionTime / totalEfficiency;
       
       const hms = secondsToHMS(totalTime);
       
@@ -369,7 +412,10 @@
         单次行动时间: ${actualActionTime.toFixed(2)}秒<br>
         单次经验获取: ${actualExpGain.toFixed(1)}<br>
         经验加成: ${(totalExpBonus * 100).toFixed(1)}%<br>
-        效率加成: ${(totalEfficiencyBonus * 100).toFixed(1)}%
+        速度加成: ${(totalSpeedBonus * 100).toFixed(1)}%<br>
+        等级效率加成: ${(levelEfficiency * 100).toFixed(1)}%<br>
+        茶效率加成: ${(totalEfficiencyBonus * 100).toFixed(1)}%<br>
+        总效率加成: ${(totalEfficiency * 100).toFixed(1)}%
       `;
     }
 
