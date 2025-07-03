@@ -46,12 +46,13 @@
   
   <div class="input-row">
     <label>选择职业:</label>
-    <select id="profession">
+    <select id="profession" onchange="updateProjectOptions()">
       <option value="extract">汲取</option>
       <option value="collect">采集</option>
       <option value="mining">挖矿</option>
       <option value="crafting">打造材料</option>
       <option value="making">制作</option>
+      <option value="juice">酿造果汁</option>
     </select>
   </div>
   
@@ -178,6 +179,48 @@
       7: 80
     };
 
+    // 酿造果汁项目数据
+    const juiceProjects = {
+      'extract_juice': { name: '汲取果汁', requiredLevel: 1, baseTime: 8, expGain: 6 },
+      'collect_juice': { name: '采集果汁', requiredLevel: 4, baseTime: 8, expGain: 6 },
+      'triple_collect_juice': { name: '三采果汁', requiredLevel: 6, baseTime: 8, expGain: 11 },
+      'mining_juice': { name: '挖矿果汁', requiredLevel: 7, baseTime: 8, expGain: 12 },
+      'dessert_juice': { name: '甜品果汁', requiredLevel: 10, baseTime: 9, expGain: 15 },
+      'brewing_juice': { name: '酿造果汁', requiredLevel: 14, baseTime: 9, expGain: 18 },
+      'brewing_tea_juice': { name: '冲泡果汁', requiredLevel: 16, baseTime: 9, expGain: 20 },
+      'alchemy_juice': { name: '炼金果汁', requiredLevel: 17, baseTime: 9, expGain: 31 },
+      'enhance_juice': { name: '强化果汁', requiredLevel: 17, baseTime: 9, expGain: 21 },
+      'craft_juice': { name: '打造果汁', requiredLevel: 20, baseTime: 10, expGain: 24 },
+      'making_juice': { name: '制作果汁', requiredLevel: 25, baseTime: 10, expGain: 27 },
+      'exp_juice': { name: '经验果汁', requiredLevel: 26, baseTime: 10, expGain: 29 },
+      'weaving_juice': { name: '编制果汁', requiredLevel: 30, baseTime: 10, expGain: 30 },
+      'extract_juice_2': { name: '汲取果汁2.0', requiredLevel: 35, baseTime: 12, expGain: 33 },
+      'processing_juice': { name: '加工果汁', requiredLevel: 43, baseTime: 12, expGain: 38 },
+      'collect_juice_2': { name: '采集果汁2.0', requiredLevel: 45, baseTime: 12, expGain: 39 },
+      'mining_juice_2': { name: '挖矿果汁2.0', requiredLevel: 50, baseTime: 14, expGain: 42 },
+      'dessert_juice_2': { name: '甜品果汁2.0', requiredLevel: 50, baseTime: 14, expGain: 42 },
+      'brewing_juice_2': { name: '酿造果汁2.0', requiredLevel: 55, baseTime: 14, expGain: 45 },
+      'extract_juice_3': { name: '汲取果汁3.0', requiredLevel: 55, baseTime: 12, expGain: 51 },
+      'efficiency_juice': { name: '效率果汁', requiredLevel: 58, baseTime: 14, expGain: 47 },
+      'alchemy_juice_2': { name: '炼金果汁2.0', requiredLevel: 60, baseTime: 14, expGain: 48 },
+      'enhance_juice_2': { name: '强化果汁2.0', requiredLevel: 60, baseTime: 14, expGain: 48 },
+      'collect_juice_3': { name: '采集果汁3.0', requiredLevel: 60, baseTime: 12, expGain: 52 },
+      'craft_juice_2': { name: '打造果汁2.0', requiredLevel: 65, baseTime: 16, expGain: 51 },
+      'mining_juice_3': { name: '挖矿果汁3.0', requiredLevel: 65, baseTime: 12, expGain: 56 },
+      'eco_juice': { name: '环保果汁', requiredLevel: 68, baseTime: 16, expGain: 53 },
+      'making_juice_2': { name: '制作果汁2.0', requiredLevel: 70, baseTime: 16, expGain: 54 },
+      'dessert_juice_3': { name: '甜品果汁3.0', requiredLevel: 70, baseTime: 14, expGain: 60 },
+      'catalyst_juice': { name: '催化果汁', requiredLevel: 73, baseTime: 16, expGain: 56 },
+      'weaving_juice_2': { name: '编制果汁2.0', requiredLevel: 75, baseTime: 16, expGain: 57 },
+      'brewing_juice_3': { name: '酿造果汁3.0', requiredLevel: 75, baseTime: 14, expGain: 63 },
+      'blessing_juice': { name: '祝福果汁', requiredLevel: 78, baseTime: 16, expGain: 58 },
+      'alchemy_juice_3': { name: '炼金果汁3.0', requiredLevel: 80, baseTime: 16, expGain: 66 },
+      'enhance_juice_3': { name: '强化果汁3.0', requiredLevel: 80, baseTime: 14, expGain: 66 },
+      'craft_juice_3': { name: '打造果汁3.0', requiredLevel: 85, baseTime: 16, expGain: 70 },
+      'making_juice_3': { name: '制作果汁3.0', requiredLevel: 90, baseTime: 16, expGain: 72 },
+      'weaving_juice_3': { name: '编制果汁3.0', requiredLevel: 95, baseTime: 16, expGain: 75 }
+    };
+
     // 工具基础行动速度加成
     const toolBonus = {
       'none': 1.0,
@@ -215,6 +258,32 @@
       'ultra': { exp: 1.0, efficiency: 1.09 }
     };
 
+    // 更新项目选项
+    function updateProjectOptions() {
+      const profession = document.getElementById('profession').value;
+      const projectSelect = document.getElementById('project');
+      
+      if (profession === 'juice') {
+        projectSelect.innerHTML = '';
+        for (const [key, value] of Object.entries(juiceProjects)) {
+          const option = document.createElement('option');
+          option.value = key;
+          option.textContent = value.name;
+          projectSelect.appendChild(option);
+        }
+      } else {
+        projectSelect.innerHTML = `
+          <option value="1">1阶段</option>
+          <option value="2">2阶段</option>
+          <option value="3">3阶段</option>
+          <option value="4">4阶段</option>
+          <option value="5">5阶段</option>
+          <option value="6">6阶段</option>
+          <option value="7">7阶段</option>
+        `;
+      }
+    }
+
     // 自动设置工具
     function autoSetTool() {
       const level = parseInt(document.getElementById('level').value);
@@ -239,49 +308,67 @@
 
     // 根据选取项目获取经验值和基础时长
     function getTargetStats(project) {
-      let expGain, baseTime;
+      const profession = document.getElementById('profession').value;
       
-      switch(project) {
-        case 1:
-          expGain = 5;
-          baseTime = 6;
-          break;
-        case 2:
-          expGain = 7.5;
-          baseTime = 8;
-          break;
-        case 3:
-          expGain = 12.5;
-          baseTime = 11;
-          break;
-        case 4:
-          expGain = 20;
-          baseTime = 14;
-          break;
-        case 5:
-          expGain = 30;
-          baseTime = 17;
-          break;
-        case 6:
-          expGain = 40;
-          baseTime = 20;
-          break;
-        case 7:
-          expGain = 55.5;
-          baseTime = 30;
-          break;
-        default:
-          expGain = 5;
-          baseTime = 6;
-          break;
+      if (profession === 'juice') {
+        const juiceData = juiceProjects[project];
+        return {
+          expGain: juiceData.expGain,
+          baseTime: juiceData.baseTime
+        };
+      } else {
+        let expGain, baseTime;
+        
+        switch(parseInt(project)) {
+          case 1:
+            expGain = 5;
+            baseTime = 6;
+            break;
+          case 2:
+            expGain = 7.5;
+            baseTime = 8;
+            break;
+          case 3:
+            expGain = 12.5;
+            baseTime = 11;
+            break;
+          case 4:
+            expGain = 20;
+            baseTime = 14;
+            break;
+          case 5:
+            expGain = 30;
+            baseTime = 17;
+            break;
+          case 6:
+            expGain = 40;
+            baseTime = 20;
+            break;
+          case 7:
+            expGain = 55.5;
+            baseTime = 30;
+            break;
+          default:
+            expGain = 5;
+            baseTime = 6;
+            break;
+        }
+        
+        return { expGain, baseTime };
       }
-      
-      return { expGain, baseTime };
     }
 
     // 计算等级效率加成
     function calculateLevelEfficiency(currentLevel, project) {
-      const requiredLevel = projectRequiredLevel[project];
+      const profession = document.getElementById('profession').value;
+      let requiredLevel;
+      
+      if (profession === 'juice') {
+        requiredLevel = juiceProjects[project].requiredLevel;
+      } else {
+        requiredLevel = projectRequiredLevel[parseInt(project)];
+      }
+      
       const levelDifference = currentLevel - requiredLevel;
       const efficiency = Math.max(1.0, 1.0 + levelDifference*0.01);
       return efficiency;
@@ -313,7 +400,7 @@
       const currentLevel = parseInt(document.getElementById('level').value);
       const progress = parseFloat(document.getElementById('progress').value);
       const targetLevel = parseInt(document.getElementById('target').value);
-      const project = parseInt(document.getElementById('project').value);
+      const project = document.getElementById('project').value;
       const tool = document.getElementById('tool').value;
       const enhancement = parseInt(document.getElementById('enhancement').value);
       const bag = document.getElementById('bag').value;
@@ -364,7 +451,6 @@
       const actualExpGain = targetStats.expGain * totalExpBonus;
       
       // 计算实际行动时间（应用速度加成和效率加成）
-      
       const actualActionTime = targetStats.baseTime / toolSpeedBonus / enhanceBonus;	
       const totalSpeedBonus = toolSpeedBonus * enhanceBonus;
       
@@ -388,6 +474,9 @@
         总效率加成: ${(totalEfficiency * 100).toFixed(1)}%
       `;
     }
+
+    // 初始化页面
+    updateProjectOptions();
   </script>
 </body>
 </html>
