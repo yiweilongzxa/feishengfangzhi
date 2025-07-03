@@ -46,9 +46,12 @@
   
   <div class="input-row">
     <label>选择职业:</label>
-    <select id="profession" onchange="updateTeaOptions()">
+    <select id="profession">
       <option value="extract">汲取</option>
       <option value="collect">采集</option>
+      <option value="mining">挖矿</option>
+      <option value="crafting">打造材料</option>
+      <option value="making">制作</option>
     </select>
   </div>
   
@@ -118,15 +121,15 @@
         <option value="none">无</option>
         <option value="exp">经验茶</option>
         <option value="efficiency">效率茶</option>
-        <option value="extract">汲取茶</option>
+        <option value="normal">普通茶</option>
       </select>
       
       <select id="tea3">
         <option value="none">无</option>
         <option value="exp">经验茶</option>
         <option value="efficiency">效率茶</option>
-        <option value="super_extract">超级汲取茶</option>
-	<option value="ultra_extract">究极汲取茶</option>
+        <option value="super">超级茶</option>
+        <option value="ultra">究极茶</option>
       </select>
     </div>
   </div>
@@ -202,48 +205,15 @@
       'huge': 1.0
     };
 
-    // 茶的加成
+    // 茶的加成（统一化茶类型）
     const teaBonus = {
       'none': { exp: 1.0, efficiency: 1.0 },
       'exp': { exp: 1.12, efficiency: 1.0 },
       'efficiency': { exp: 1.0, efficiency: 1.09 },
-      'extract': { exp: 1.0, efficiency: 1.0 },
-      'super_extract': { exp: 1.0, efficiency: 1.0 },
-      'ultra_extract': { exp: 1.0, efficiency: 1.0 },
-      'collect': { exp: 1.0, efficiency: 1.0 },
-      'super_collect': { exp: 1.0, efficiency: 1.0 },
-      'ultra_collect': { exp: 1.0, efficiency: 1.09 }
+      'normal': { exp: 1.0, efficiency: 1.0 },
+      'super': { exp: 1.0, efficiency: 1.0 },
+      'ultra': { exp: 1.0, efficiency: 1.09 }
     };
-
-    // 更新茶选项
-    function updateTeaOptions() {
-      const profession = document.getElementById('profession').value;
-      const tea2 = document.getElementById('tea2');
-      const tea3 = document.getElementById('tea3');
-      
-      // 重置茶选项
-      tea2.innerHTML = `
-        <option value="none">无</option>
-        <option value="exp">经验茶</option>
-        <option value="efficiency">效率茶</option>
-      `;
-      
-      tea3.innerHTML = `
-        <option value="none">无</option>
-        <option value="exp">经验茶</option>
-        <option value="efficiency">效率茶</option>
-      `;
-      
-      if (profession === 'extract') {
-        tea2.innerHTML += '<option value="extract">汲取茶</option>';
-        tea3.innerHTML += '<option value="super_extract">超级汲取茶</option>';
-	tea3.innerHTML += '<option value="ultra_extract">究极汲取茶</option>';
-      } else if (profession === 'collect') {
-        tea2.innerHTML += '<option value="collect">采集茶</option>';
-        tea3.innerHTML += '<option value="super_collect">超级采集茶</option>';
-	tea3.innerHTML += '<option value="ultra_collect">究极采集茶</option>';
-      }
-    }
 
     // 自动设置工具
     function autoSetTool() {
@@ -418,9 +388,6 @@
         总效率加成: ${(totalEfficiency * 100).toFixed(1)}%
       `;
     }
-
-    // 初始化茶选项
-    updateTeaOptions();
   </script>
 </body>
 </html>
