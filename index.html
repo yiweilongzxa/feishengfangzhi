@@ -51,6 +51,7 @@
       <option value="collect">采集</option>
       <option value="mining">挖矿</option>
       <option value="crafting">打造材料</option>
+      <option value="crafting_equipment">制作装备</option> <!-- 添加制作装备选项 -->
       <option value="making">制作</option>
       <option value="juice">酿造果汁</option>
     </select>
@@ -221,6 +222,90 @@
       'weaving_juice_3': { name: '编制果汁3.0', requiredLevel: 95, baseTime: 16, expGain: 75 }
     };
 
+    // 打造工具项目数据
+    const toolCraftingProjects = {
+      'initial_crown': { name: '初始王冠', requiredLevel: 2, baseTime: 6, expGain: 14 },
+      'initial_gloves': { name: '初始手套', requiredLevel: 2, baseTime: 6, expGain: 14 },
+      'initial_pickaxe': { name: '初始稿', requiredLevel: 2, baseTime: 6, expGain: 14 },
+      'initial_anvil': { name: '初始砧', requiredLevel: 4, baseTime: 6, expGain: 14 },
+      'initial_hammer': { name: '初始榔头', requiredLevel: 4, baseTime: 6, expGain: 14 },
+      'initial_rag': { name: '初始抹布', requiredLevel: 4, baseTime: 6, expGain: 14 },
+      'initial_pot': { name: '初始铁锅', requiredLevel: 4, baseTime: 6, expGain: 14 },
+      'initial_staff': { name: '初始术棍', requiredLevel: 4, baseTime: 6, expGain: 14 },
+      'initial_furnace': { name: '初始炉鼎', requiredLevel: 6, baseTime: 6, expGain: 14 },
+      'initial_ak': { name: '初始ak', requiredLevel: 6, baseTime: 6, expGain: 14 },
+      'platinum_crown': { name: '白金王冠', requiredLevel: 12, baseTime: 10.5, expGain: 31.5 },
+      'platinum_gloves': { name: '白金手套', requiredLevel: 12, baseTime: 10.5, expGain: 31.5 },
+      'platinum_pickaxe': { name: '白金稿', requiredLevel: 12, baseTime: 10.5, expGain: 31.5 },
+      'platinum_anvil': { name: '白金砧', requiredLevel: 14, baseTime: 10.5, expGain: 31.5 },
+      'platinum_hammer': { name: '白金榔头', requiredLevel: 14, baseTime: 10.5, expGain: 31.5 },
+      'platinum_rag': { name: '白金抹布', requiredLevel: 14, baseTime: 10.5, expGain: 31.5 },
+      'platinum_pot': { name: '白金铁锅', requiredLevel: 14, baseTime: 10.5, expGain: 31.5 },
+      'platinum_staff': { name: '白金术棍', requiredLevel: 14, baseTime: 10.5, expGain: 31.5 },
+      'platinum_furnace': { name: '白金炉鼎', requiredLevel: 16, baseTime: 10.5, expGain: 31.5 },
+      'platinum_ak': { name: '白金ak', requiredLevel: 16, baseTime: 10.5, expGain: 31.5 },
+      'emerald_crown': { name: '祖母王冠', requiredLevel: 22, baseTime: 16, expGain: 70 },
+      'emerald_gloves': { name: '祖母手套', requiredLevel: 22, baseTime: 16, expGain: 70 },
+      'emerald_pickaxe': { name: '祖母稿', requiredLevel: 22, baseTime: 16, expGain: 70 },
+      'emerald_anvil': { name: '祖母砧', requiredLevel: 24, baseTime: 16, expGain: 70 },
+      'emerald_hammer': { name: '祖母榔头', requiredLevel: 24, baseTime: 16, expGain: 70 },
+      'emerald_rag': { name: '祖母抹布', requiredLevel: 24, baseTime: 16, expGain: 70 },
+      'emerald_pot': { name: '祖母铁锅', requiredLevel: 24, baseTime: 16, expGain: 70 },
+      'emerald_staff': { name: '祖母术棍', requiredLevel: 24, baseTime: 16, expGain: 70 },
+      'emerald_furnace': { name: '祖母炉鼎', requiredLevel: 26, baseTime: 16, expGain: 70 },
+      'emerald_ak': { name: '祖母ak', requiredLevel: 26, baseTime: 16, expGain: 70 },
+      'copper_crown': { name: '山铜王冠', requiredLevel: 37, baseTime: 27, expGain: 168 },
+      'copper_gloves': { name: '山铜手套', requiredLevel: 37, baseTime: 27, expGain: 168 },
+      'copper_pickaxe': { name: '山铜镐', requiredLevel: 37, baseTime: 27, expGain: 168 },
+      'copper_anvil': { name: '山铜砧', requiredLevel: 39, baseTime: 27, expGain: 168 },
+      'copper_hammer': { name: '山铜榔头', requiredLevel: 39, baseTime: 27, expGain: 168 },
+      'copper_rag': { name: '山铜抹布', requiredLevel: 39, baseTime: 27, expGain: 168 },
+      'copper_pot': { name: '山铜铁锅', requiredLevel: 39, baseTime: 27, expGain: 168 },
+      'copper_staff': { name: '山铜术棍', requiredLevel: 39, baseTime: 27, expGain: 168 },
+      'copper_furnace': { name: '山铜炉鼎', requiredLevel: 41, baseTime: 27, expGain: 168 },
+      'copper_ak': { name: '山铜ak', requiredLevel: 41, baseTime: 27, expGain: 168 },
+      'purple_crown': { name: '秘紫王冠', requiredLevel: 52, baseTime: 45, expGain: 378 },
+      'purple_gloves': { name: '秘紫手套', requiredLevel: 52, baseTime: 45, expGain: 378 },
+      'purple_pickaxe': { name: '秘紫镐', requiredLevel: 52, baseTime: 45, expGain: 378 },
+      'purple_anvil': { name: '秘紫砧', requiredLevel: 54, baseTime: 45, expGain: 378 },
+      'purple_hammer': { name: '秘紫榔头', requiredLevel: 54, baseTime: 45, expGain: 378 },
+      'purple_rag': { name: '秘紫抹布', requiredLevel: 54, baseTime: 45, expGain: 378 },
+      'purple_pot': { name: '秘紫铁锅', requiredLevel: 54, baseTime: 45, expGain: 378 },
+      'purple_staff': { name: '秘紫术棍', requiredLevel: 54, baseTime: 45, expGain: 378 },
+      'purple_furnace': { name: '秘紫炉鼎', requiredLevel: 56, baseTime: 45, expGain: 378 },
+      'purple_ak': { name: '秘紫ak', requiredLevel: 56, baseTime: 45, expGain: 378 },
+      'arcane_crown': { name: '奥术王冠', requiredLevel: 67, baseTime: 78, expGain: 728 },
+      'arcane_gloves': { name: '奥术手套', requiredLevel: 67, baseTime: 78, expGain: 728 },
+      'arcane_pickaxe': { name: '奥术镐', requiredLevel: 67, baseTime: 78, expGain: 728 },
+      'arcane_anvil': { name: '奥术砧', requiredLevel: 69, baseTime: 78, expGain: 728 },
+      'arcane_hammer': { name: '奥术榔头', requiredLevel: 69, baseTime: 78, expGain: 728 },
+      'arcane_rag': { name: '奥术抹布', requiredLevel: 69, baseTime: 78, expGain: 728 },
+      'arcane_pot': { name: '奥术铁锅', requiredLevel: 69, baseTime: 78, expGain: 728 },
+      'arcane_staff': { name: '奥术术棍', requiredLevel: 69, baseTime: 78, expGain: 728 },
+      'arcane_furnace': { name: '奥术炉鼎', requiredLevel: 71, baseTime: 78, expGain: 728 },
+      'arcane_ak': { name: '奥术ak', requiredLevel: 71, baseTime: 78, expGain: 728 },
+      'gold_crown': { name: '精金王冠', requiredLevel: 82, baseTime: 135, expGain: 1387 },
+      'gold_gloves': { name: '精金手套', requiredLevel: 82, baseTime: 135, expGain: 1387 },
+      'gold_pickaxe': { name: '精金镐', requiredLevel: 82, baseTime: 135, expGain: 1387 },
+      'gold_anvil': { name: '精金砧', requiredLevel: 84, baseTime: 135, expGain: 1387 },
+      'gold_hammer': { name: '精金榔头', requiredLevel: 84, baseTime: 135, expGain: 1387 },
+      'gold_rag': { name: '精金抹布', requiredLevel: 84, baseTime: 135, expGain: 1387 },
+      'gold_pot': { name: '精金铁锅', requiredLevel: 84, baseTime: 135, expGain: 1387 },
+      'gold_staff': { name: '精金术棍', requiredLevel: 84, baseTime: 135, expGain: 1387 },
+      'gold_furnace': { name: '精金炉鼎', requiredLevel: 86, baseTime: 135, expGain: 1387 },
+      'gold_ak': { name: '精金ak', requiredLevel: 86, baseTime: 135, expGain: 1387 },
+      'bone_crown': { name: '骸骨王冠', requiredLevel: 90, baseTime: 250, expGain: 2615 },
+      'bone_gloves': { name: '骸骨手套', requiredLevel: 90, baseTime: 250, expGain: 2615 },
+      'bone_pickaxe': { name: '骸骨镐', requiredLevel: 90, baseTime: 250, expGain: 2615 },
+      'bone_anvil': { name: '骸骨砧', requiredLevel: 92, baseTime: 250, expGain: 2615 },
+      'bone_hammer': { name: '骸骨榔头', requiredLevel: 92, baseTime: 250, expGain: 2615 },
+      'bone_rag': { name: '骸骨抹布', requiredLevel: 92, baseTime: 250, expGain: 2615 },
+      'bone_pot': { name: '骸骨铁锅', requiredLevel: 92, baseTime: 250, expGain: 2615 },
+      'bone_staff': { name: '骸骨术棍', requiredLevel: 92, baseTime: 250, expGain: 2615 },
+      'bone_furnace': { name: '骸骨炉鼎', requiredLevel: 94, baseTime: 250, expGain: 2615 },
+      'bone_ak': { name: '骸骨ak', requiredLevel: 94, baseTime: 250, expGain: 2615 }
+    };
+
     // 工具基础行动速度加成
     const toolBonus = {
       'none': 1.0,
@@ -271,6 +356,14 @@
           option.textContent = value.name;
           projectSelect.appendChild(option);
         }
+      } else if (profession === 'crafting_equipment') {
+        projectSelect.innerHTML = '';
+        for (const [key, value] of Object.entries(toolCraftingProjects)) {
+          const option = document.createElement('option');
+          option.value = key;
+          option.textContent = value.name;
+          projectSelect.appendChild(option);
+        }
       } else {
         projectSelect.innerHTML = `
           <option value="1">1阶段</option>
@@ -315,6 +408,12 @@
         return {
           expGain: juiceData.expGain,
           baseTime: juiceData.baseTime
+        };
+      } else if (profession === 'crafting_equipment') {
+        const toolData = toolCraftingProjects[project];
+        return {
+          expGain: toolData.expGain,
+          baseTime: toolData.baseTime
         };
       } else {
         let expGain, baseTime;
@@ -365,6 +464,8 @@
       
       if (profession === 'juice') {
         requiredLevel = juiceProjects[project].requiredLevel;
+      } else if (profession === 'crafting_equipment') {
+        requiredLevel = toolCraftingProjects[project].requiredLevel;
       } else {
         requiredLevel = projectRequiredLevel[parseInt(project)];
       }
@@ -432,7 +533,7 @@
       
       // 计算茶的加成
       let totalExpBonus = 1.0;
-      let totalEfficiencyBonus = 0.0;
+      let totalEfficiencyBonus = 1.0;
       
       [tea1, tea2, tea3].forEach(tea => {
         if (tea !== 'none' && teaBonus[tea]) {
@@ -445,14 +546,14 @@
       const levelEfficiency = calculateLevelEfficiency(currentLevel, project);
       
       // 计算总效率加成（包含等级效率和茶的效率）
-      const totalEfficiency = levelEfficiency + totalEfficiencyBonus;
+      const totalEfficiency = levelEfficiency * totalEfficiencyBonus;
       
       // 计算实际经验获取
       const actualExpGain = targetStats.expGain * totalExpBonus;
       
-      // 计算实际行动时间（应用速度加成和效率加成）
-      const actualActionTime = targetStats.baseTime / toolSpeedBonus / enhanceBonus;	
-      const totalSpeedBonus = toolSpeedBonus * enhanceBonus;
+      // 计算实际行动时间（应用速度加成）
+      const actualActionTime = targetStats.baseTime / (toolSpeedBonus * enhanceBonus * bagSpeedBonus);	
+      const totalSpeedBonus = toolSpeedBonus * enhanceBonus * bagSpeedBonus;
       
       // 计算需要的行动次数
       const actionsNeeded = neededExp / actualExpGain;
@@ -467,11 +568,11 @@
         需要行动次数: ${Math.ceil(actionsNeeded)}次<br>
         单次行动时间: ${actualActionTime.toFixed(2)}秒<br>
         单次经验获取: ${actualExpGain.toFixed(1)}<br>
-        经验加成: ${(totalExpBonus * 100).toFixed(1)}%<br>
-        速度加成: ${(totalSpeedBonus * 100).toFixed(1)}%<br>
-        等级效率加成: ${(levelEfficiency * 100).toFixed(1)}%<br>
-        茶效率加成: ${(totalEfficiencyBonus * 100).toFixed(1)}%<br>
-        总效率加成: ${(totalEfficiency * 100).toFixed(1)}%
+        经验加成: ${((totalExpBonus - 1) * 100).toFixed(1)}%<br>
+        速度加成: ${((totalSpeedBonus - 1) * 100).toFixed(1)}%<br>
+        等级效率加成: ${((levelEfficiency - 1) * 100).toFixed(1)}%<br>
+        茶效率加成: ${((totalEfficiencyBonus - 1) * 100).toFixed(1)}%<br>
+        总效率加成: ${((totalEfficiency - 1) * 100).toFixed(1)}%
       `;
     }
 
